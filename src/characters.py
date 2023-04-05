@@ -28,7 +28,7 @@ def clearTroops():
     troops_spawned['dragon'] = 0
     troops_spawned['balloon'] = 0
     troops_spawned['archer'] = 0
-
+    troops_spawned['stealtharcher'] = 0
 
 class Barbarian:
     def __init__(self, position):
