@@ -4,7 +4,7 @@ init(autoreset=True)
 import points as pt
 import numpy as np
 import datetime
-from characters import barbarians, dragons, balloons, archers
+from characters import barbarians, dragons, balloons, archers, stealthArchers
 
 # 50 - 100 : cyan
 # 20 - 50 : yellow
@@ -82,6 +82,8 @@ def archColor(arch):
         return Back.LIGHTRED_EX
     else:
         return Back.YELLOW
+def stealthArchColor():
+    return Back.WHITE
 
 def blColor(bl):
     health = bl.health
@@ -270,6 +272,14 @@ def printMap(V):
         map_matrix[a][b+1] = archColor(arch) + Fore.BLACK + 'CH'
         map_matrix[a+1][b+1] = archColor(arch) + Fore.BLACK + 'ER'
     
+    for stealthArch in stealthArchers:
+        a= 2*stealthArch.position[0]
+        b = 2*stealthArch.position[1]
+        stealthArch.update()
+        map_matrix[a][b] = stealthArchColor() + Fore.BLACK + 'ST'
+        map_matrix[a+1][b] = stealthArchColor() + Fore.BLACK + 'CH'
+        map_matrix[a][b+1] = stealthArchColor() + Fore.BLACK + 'AR'
+        map_matrix[a+1][b+1] = stealthArchColor() + Fore.BLACK + 'ER'
 
     for dr in dragons:
         a= 2*dr.position[0]
