@@ -4,7 +4,7 @@ init(autoreset=True)
 import points as pt
 import numpy as np
 import datetime
-from characters import barbarians, dragons, balloons, archers, stealthArchers
+from characters import barbarians, dragons, balloons, archers, stealthArchers, healers
 
 # 50 - 100 : cyan
 # 20 - 50 : yellow
@@ -96,7 +96,16 @@ def blColor(bl):
     else:
         return Back.WHITE
         
-
+def healColor(heal):
+    health = heal.health
+    max_health = heal.max_health
+    percentage = (health*100)/max_health
+    if(percentage > 50):
+        return Back.LIGHTMAGENTA_EX
+    elif percentage > 20:
+        return Back.LIGHTRED_EX
+    else:
+        return Back.YELLOW
 
 def printMap(V):
     map = np.copy(V.map)
@@ -297,7 +306,13 @@ def printMap(V):
         map_matrix[a][b+1] = blColor(bl) + Fore.BLACK + 'LL'
         map_matrix[a+1][b+1] = blColor(bl) + Fore.BLACK + 'N '
 
-
+    for heal in healers:
+        a = 2*heal.position[0]
+        b = 2*heal.position[1]
+        map_matrix[a][b] = healColor(heal) + Fore.BLACK + 'HE'
+        map_matrix[a+1][b] = healColor(heal) + Fore.BLACK + 'AL'
+        map_matrix[a][b+1] = healColor(heal) + Fore.BLACK + '  '
+        map_matrix[a+1][b+1] = healColor(heal) + Fore.BLACK + 'ER'
 
     store_replay(map_matrix)
     store_level(V.level)

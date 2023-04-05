@@ -8,13 +8,15 @@ dragons = []
 balloons = []
 archers = []
 stealthArchers = []
+healers = []
 
 troops_spawned = {
     'barbarian': 0,
     'archer': 0,
     'dragon': 0,
     'balloon': 0,
-    'stealtharcher': 0
+    'stealtharcher': 0,
+    'healer': 0
 }
 
 
@@ -24,11 +26,131 @@ def clearTroops():
     balloons.clear()
     archers.clear()
     stealthArchers.clear()
+    healers.clear()
     troops_spawned['barbarian'] = 0
     troops_spawned['dragon'] = 0
     troops_spawned['balloon'] = 0
     troops_spawned['archer'] = 0
     troops_spawned['stealtharcher'] = 0
+    troops_spawned['healer'] = 0
+    
+class Healer:
+    def __init__(self, position):
+        self.speed = 1
+        self.health = 250
+        self.max_health = 250
+        self.healStrength = 20
+        self.Range = 7
+        self.healRadius = 1
+        self.position = position
+        self.alive = True
+        self.target = None
+    
+    def move(self, pos):
+        if(self.alive == False):
+            return
+        r = abs(pos[0] - self.position[0])
+        c = abs(pos[1] - self.position[1])
+        if(self.isInRange(pos)):
+            troops = barbarians + dragons + balloons + archers + stealthArchers
+            for troop in troops:
+                if(troop.alive == False):
+                    continue
+                distance = (troop.position[0] - pos[0])**2 + (troop.position[1] - pos[1])**2
+                if(distance <= self.healRadius**2):
+                    self.give_health(troop)
+            return
+        elif(r == 0):
+            if(pos[1] > self.position[1]):
+                for i in range(self.speed):
+                    r = self.position[0]
+                    c = self.position[1] + 1
+                    self.position[1] += 1
+                    if(self.isInRange(pos)):
+                        break
+            else:
+                for i in range(self.speed):
+                    r = self.position[0]
+                    c = self.position[1] - 1
+                    self.position[1] -= 1
+                    if(self.isInRange(pos)):
+                        break
+        elif(r > 1):
+            if(pos[0] > self.position[0]):
+                for i in range(self.speed):
+                    r = self.position[0] + 1
+                    c = self.position[1]
+                    self.position[0] += 1
+                    if(self.position[0] == pos[0] or self.isInRange(pos)):
+                        return
+            else:
+                for i in range(self.speed):
+                    r = self.position[0] - 1
+                    c = self.position[1]
+                    self.position[0] -= 1
+                    if(self.position[0] == pos[0] or self.isInRange(pos)):
+                        return
+        elif(c > 1):
+            if(pos[1] > self.position[1]):
+                for i in range(self.speed):
+                    r = self.position[0]
+                    c = self.position[1] + 1
+                    self.position[1] += 1
+                    if(self.position[1] == pos[1] or self.isInRange(pos)):
+                        return
+            else:
+                for i in range(self.speed):
+                    r = self.position[0]
+                    c = self.position[1] - 1
+                    self.position[1] -= 1
+                    if(self.position[1] == pos[1] or self.isInRange(pos)):
+                        return
+        elif(r+c == 2):
+            if(pos[0] > self.position[0]):
+                for i in range(self.speed):
+                    r = self.position[0] + 1
+                    c = self.position[1]
+                    self.position[0] += 1
+                    if(self.isInRange(pos)):
+                        break
+            else:
+                for i in range(self.speed):
+                    r = self.position[0] - 1
+                    c = self.position[1]
+                    self.position[0] -= 1
+                    if(self.isInRange(pos)):
+                        break
+    
+    def isInRange(self,pos):
+        r = abs(pos[0] - self.position[0])
+        c = abs(pos[1] - self.position[1])
+        if(r**2 + c**2 <= self.Range**2):
+            return True
+        return False
+    
+    def deal_damage(self, hit):
+        if(self.alive == False):
+            return
+        self.health -= hit
+        if self.health <= 0:
+            self.health = 0
+            self.kill()
+    
+    def heal_effect(self):
+        self.health = self.health*1.5
+        if self.health > self.max_health:
+            self.health = self.max_health
+
+    def kill(self):
+        self.alive = False
+        healers.remove(self)
+
+    def give_health(self, troop):
+        if(self.alive == False):
+            return
+        troop.health += self.healStrength
+        if troop.health > troop.max_health:
+            troop.health = troop.max_health
 
 class Barbarian:
     def __init__(self, position):
@@ -690,6 +812,15 @@ def spawnBalloon(pos):
     troops_spawned['balloon'] += 1
     balloons.append(bal)
 
+def spawnHealer(pos):
+    if(pt.troop_limit['healer'] <= troops_spawned['healer']):
+        return
+    
+    pos = list(pos)
+    healer = Healer(pos)
+    troops_spawned['healer'] += 1
+    healers.append(healer)
+
 def move_barbarians(V,type):
     if(type == 1):
         for barb in barbarians:
@@ -754,6 +885,29 @@ def move_balloons(V):
             continue
         bal.move(closest_building, V)
 
+def move_healers(V):
+    for healer in healers:
+        if(healer.alive == False):
+            continue
+        closest_troop = search_for_closest_troop(healer.position, V.map)
+        if(closest_troop == None):
+            continue
+        healer.move(closest_troop.position)
+        
+def search_for_closest_troop(pos,vmap):
+    closest_troop = None
+    closest_dist = 10000
+    troops = barbarians + archers + stealthArchers + dragons + balloons
+    for troop in troops:
+        if(troop.alive == False):
+            continue
+        dist = abs(troop.position[0] - pos[0]) + abs(troop.position[1] - pos[1])
+        if(dist < closest_dist):
+            closest_dist = dist
+            closest_troop = troop
+
+    return closest_troop
+            
 def search_for_closest_building(pos, vmap, prioritized):
     closest_building = None
     closest_dist = 10000

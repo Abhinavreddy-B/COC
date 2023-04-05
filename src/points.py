@@ -24,6 +24,7 @@ troop_limit = {
     'balloon': 5,
     'archer': 7,
     'stealtharcher': 3,
+    'healer': 3,
 }
 
 
