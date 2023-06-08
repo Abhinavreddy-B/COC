@@ -151,7 +151,7 @@ while(True):
     move_archers(V,pt.movement)
     move_dragons(V)
     move_balloons(V)
-    move_healers(V)
+    move_healers(V,King)
     shoot_cannons(King, V)
     shoot_wizard_towers(King, V)
     if(cnt % 20 == 0):

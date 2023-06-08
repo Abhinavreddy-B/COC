@@ -47,6 +47,16 @@
 - k : spawn at point 2
 - l : spawn at point 3
 
+### Stealth Achers:
+-  t : spawn at point 1
+-  y : spawn at point 2
+-  u : spawn at point 3
+
+### Healers:
+-  4 : spawn at point 1
+-  5 : spawn at point 2
+-  6 : spawn at point 3
+
 q : Quit Game
 
 ## Assumptions :
@@ -57,5 +67,11 @@ q : Quit Game
     - Archers : 7
     - Balloon : 5
     - Dragon : 3
+    - Stealth Archers: 3
+    - Healers: 3
 - You have to choose the type of troop movement at start of the game.
 - You have to choose the hero after each level.
+
+- closest troop in Healer is calculated using Euclidian distance.
+- explosion of wall (level>=3) is 5x5 square centered at the wall.
+- Healing AoE for healer is 3x3 square centered at the terget troop.

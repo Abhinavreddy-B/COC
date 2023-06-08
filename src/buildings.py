@@ -1,6 +1,6 @@
 import numpy as np
 import points as pt
-from characters import barbarians, dragons, balloons, archers, healers
+from characters import barbarians, dragons, balloons, archers, healers, stealthArchers
 
 
 class Building:
@@ -30,16 +30,21 @@ class Hut(Building):
 
 
 class Cannon(Building):
-    def __init__(self, position, V):
+    def __init__(self, position, V,level = 1):
+        if(level>5):
+            level = 5
+        if(level<1):
+            level = 1
+        self.level = level
         self.position = position
         self.dimensions = (2, 2)
         self.V = V
         self.destroyed = False
-        self.health = 60
-        self.max_health = 60
+        self.health = 60 + 30*level
+        self.max_health = 60 + 30*level
         self.type = 'cannon'
-        self.attack = 5
-        self.attack_radius = 5
+        self.attack = 4 + level
+        self.attack_radius = 5 + (level/2)
         self.isShooting = False
 
     def scan_for_targets(self, King):
@@ -77,14 +82,28 @@ class Cannon(Building):
 
 
 class Wall(Building):
-    def __init__(self, position, V):
+    def __init__(self, position, V,level = 1):
+        if(level>5):
+            level = 5
+        if(level<1):
+            level = 1
+        self.level = level
         self.position = position
         self.dimensions = (1, 1)
         self.V = V
         self.destroyed = False
-        self.health = 20
-        self.max_health = 20
+        self.health = 100 + 40*level
         self.type = 'wall'
+        self.explosionDamage = 200
+        self.explosionRange = 2
+    
+    def destroy(self):
+        super().destroy()
+        if(self.level >= 3):
+            troops = barbarians + archers + stealthArchers
+            for troop in troops:
+                if(abs(troop.position[0]-self.position[0])<=self.explosionRange and abs(troop.position[1]-self.position[1]) <= self.explosionRange):
+                    troop.deal_damage(self.explosionDamage)
 
 
 class TownHall(Building):
@@ -99,16 +118,21 @@ class TownHall(Building):
 
 
 class WizardTower(Building):
-    def __init__(self, position, V):
+    def __init__(self, position, V,level = 1):
+        if(level>5):
+            level = 5
+        if(level<1):
+            level = 1
+        self.level = level
         self.position = position
         self.dimensions = (1, 1)
         self.V = V
         self.destroyed = False
-        self.health = 60
-        self.max_health = 60
+        self.health = 60+30*level
+        self.max_health = 60+30*level
         self.type = 'wizardtower'
-        self.attack = 5
-        self.attack_radius = 5
+        self.attack = 4+ level
+        self.attack_radius = 5 + (level/2)
         self.isShooting = False
 
     def scan_for_targets(self, King):
@@ -135,7 +159,7 @@ class WizardTower(Building):
             target.deal_damage(self.attack)
         i = target.position[0] - 1
         j = target.position[1] - 1
-        troops = barbarians+ archers + dragons + balloons + healers
+        troops = barbarians+ archers + dragons + balloons + healers + stealthArchers
         for row in range(i, i+3):
             for col in range(j, j+3):
                 if(row < 0 or col < 0):

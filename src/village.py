@@ -2,7 +2,7 @@ import numpy as np
 import points as pt
 import buildings as bd
 import collections
-from characters import barbarians, dragons,balloons, archers, stealthArchers
+from characters import barbarians, dragons, balloons, archers, stealthArchers
 
 
 class Village:
@@ -52,41 +52,96 @@ class Village:
                 str(hut[0]) + ":" + str(hut[1])
             map[hut[0]+1][hut[1]+1] = pt.HUT + \
                 ":" + str(hut[0]) + ":" + str(hut[1])
-        for wall in self.walls_top:                                     # wall is 1x1
-            wall_obj = bd.Wall(wall, self)
-            self.wall_objs[wall] = wall_obj
+        for wall in self.walls_top:
+            position = (wall[0], wall[1])
+            if (len(wall) >= 3):
+                level = wall[2]                     # wall is 1x1
+                wall_obj = bd.Wall(position, self, level)
+                self.wall_objs[position] = wall_obj
+            else:
+                wall_obj = bd.Wall(position, self)
+                self.wall_objs[position] = wall_obj
             map[wall[0]][wall[1]] = pt.WALL_TOP
         for wall in self.walls_bottom:
-            wall_obj = bd.Wall(wall, self)
-            self.wall_objs[wall] = wall_obj
+            position = (wall[0], wall[1])
+            if (len(wall) >= 3):
+                level = wall[2]                     # wall is 1x1
+                wall_obj = bd.Wall(position, self, level)
+                self.wall_objs[position] = wall_obj
+            else:
+                wall_obj = bd.Wall(position, self)
+                self.wall_objs[position] = wall_obj
             map[wall[0]][wall[1]] = pt.WALL_BOTTOM
         for wall in self.walls_left:
-            wall_obj = bd.Wall(wall, self)
-            self.wall_objs[wall] = wall_obj
+            position = (wall[0], wall[1])
+            if (len(wall) >= 3):
+                level = wall[2]                     # wall is 1x1
+                wall_obj = bd.Wall(position, self, level)
+                self.wall_objs[position] = wall_obj
+            else:
+                wall_obj = bd.Wall(position, self)
+                self.wall_objs[position] = wall_obj
             map[wall[0]][wall[1]] = pt.WALL_LEFT
         for wall in self.walls_right:
-            wall_obj = bd.Wall(wall, self)
-            self.wall_objs[wall] = wall_obj
+            position = (wall[0], wall[1])
+            if (len(wall) >= 3):
+                level = wall[2]                     # wall is 1x1
+                wall_obj = bd.Wall(position, self, level)
+                self.wall_objs[position] = wall_obj
+            else:
+                wall_obj = bd.Wall(position, self)
+                self.wall_objs[position] = wall_obj
             map[wall[0]][wall[1]] = pt.WALL_RIGHT
         for wall in self.walls_topright:
-            wall_obj = bd.Wall(wall, self)
-            self.wall_objs[wall] = wall_obj
+            position = (wall[0], wall[1])
+            if (len(wall) >= 3):
+                level = wall[2]                     # wall is 1x1
+                wall_obj = bd.Wall(position, self, level)
+                self.wall_objs[position] = wall_obj
+            else:
+                wall_obj = bd.Wall(position, self)
+                self.wall_objs[position] = wall_obj
             map[wall[0]][wall[1]] = pt.WALL_TOPRIGHT
         for wall in self.walls_topleft:
-            wall_obj = bd.Wall(wall, self)
-            self.wall_objs[wall] = wall_obj
+            position = (wall[0], wall[1])
+            if (len(wall) >= 3):
+                level = wall[2]                     # wall is 1x1
+                wall_obj = bd.Wall(position, self, level)
+                self.wall_objs[position] = wall_obj
+            else:
+                wall_obj = bd.Wall(position, self)
+                self.wall_objs[position] = wall_obj
             map[wall[0]][wall[1]] = pt.WALL_TOPLEFT
         for wall in self.walls_bottomright:
-            wall_obj = bd.Wall(wall, self)
-            self.wall_objs[wall] = wall_obj
+            position = (wall[0], wall[1])
+            if (len(wall) >= 3):
+                level = wall[2]                     # wall is 1x1
+                wall_obj = bd.Wall(position, self, level)
+                self.wall_objs[position] = wall_obj
+            else:
+                wall_obj = bd.Wall(position, self)
+                self.wall_objs[position] = wall_obj
             map[wall[0]][wall[1]] = pt.WALL_BOTTOMRIGHT
         for wall in self.walls_bottomleft:
-            wall_obj = bd.Wall(wall, self)
-            self.wall_objs[wall] = wall_obj
+            position = (wall[0], wall[1])
+            if (len(wall) >= 3):
+                level = wall[2]                     # wall is 1x1
+                wall_obj = bd.Wall(position, self, level)
+                self.wall_objs[position] = wall_obj
+            else:
+                wall_obj = bd.Wall(position, self)
+                self.wall_objs[position] = wall_obj
             map[wall[0]][wall[1]] = pt.WALL_BOTTOMLEFT
-        for cannon in self.cannons:                                     # cannon is 2x2
-            cannon_obj = bd.Cannon(cannon, self)
-            self.cannon_objs[cannon] = cannon_obj
+        for cannon in self.cannons:
+            position = (cannon[0], cannon[1])
+            if (len(cannon) >= 3):
+                level = cannon[2]
+                cannon_obj = bd.Cannon(cannon, self, level)
+                self.cannon_objs[position] = cannon_obj
+            else:
+                cannon_obj = bd.Cannon(cannon, self)
+                self.cannon_objs[position] = cannon_obj
+            # cannon is 2x2
             map[cannon[0]][cannon[1]] = pt.CANNON + ":" + \
                 str(cannon[0]) + ":" + str(cannon[1])
             map[cannon[0]+1][cannon[1]] = pt.CANNON + \
@@ -95,9 +150,15 @@ class Village:
                 ":" + str(cannon[0]) + ":" + str(cannon[1])
             map[cannon[0]+1][cannon[1]+1] = pt.CANNON + \
                 ":" + str(cannon[0]) + ":" + str(cannon[1])
-        for wizard_tower in self.wizard_towers:                          # wizard tower is 1X1
-            wizard_tower_obj = bd.WizardTower(wizard_tower, self)
-            self.wizard_tower_objs[wizard_tower] = wizard_tower_obj
+        for wizard_tower in self.wizard_towers:      
+            position = (wizard_tower[0],wizard_tower[1])
+            if(len(wizard_tower)>=3):
+                level = wizard_tower[2]                    # wizard tower is 1X1
+                wizard_tower_obj = bd.WizardTower(position, self, level)
+                self.wizard_tower_objs[position] = wizard_tower_obj
+            else:
+                wizard_tower_obj = bd.WizardTower(position, self)
+                self.wizard_tower_objs[position] = wizard_tower_obj
             map[wizard_tower[0]][wizard_tower[1]] = pt.WIZARD_TOWER + \
                 ":" + str(wizard_tower[0]) + ":" + str(wizard_tower[1])
 
@@ -214,9 +275,9 @@ def createVillage(level):
 
 
 def getConfig(level):
-    if(level == 1):
+    if (level == 1):
         return pt.config_level_1
-    elif(level == 2):
+    elif (level == 2):
         return pt.config_level_2
-    elif(level == 3):
+    elif (level == 3):
         return pt.config_level_3

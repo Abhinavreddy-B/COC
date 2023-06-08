@@ -46,18 +46,18 @@ class Healer:
         self.alive = True
         self.target = None
     
-    def move(self, pos):
+    def move(self, pos,King):
         if(self.alive == False):
             return
         r = abs(pos[0] - self.position[0])
         c = abs(pos[1] - self.position[1])
+        print(pos)
         if(self.isInRange(pos)):
-            troops = barbarians + dragons + balloons + archers + stealthArchers
+            troops = barbarians + dragons + balloons + archers + stealthArchers + [King]
             for troop in troops:
                 if(troop.alive == False):
                     continue
-                distance = (troop.position[0] - pos[0])**2 + (troop.position[1] - pos[1])**2
-                if(distance <= self.healRadius**2):
+                if(abs(troop.position[0] - pos[0]) <= self.healRadius and abs(troop.position[1] - pos[1]) <= self.healRadius):
                     self.give_health(troop)
             return
         elif(r == 0):
@@ -140,6 +140,9 @@ class Healer:
         self.health = self.health*1.5
         if self.health > self.max_health:
             self.health = self.max_health
+
+    def rage_effect(self):
+        self.speed = self.speed*2
 
     def kill(self):
         self.alive = False
@@ -508,15 +511,15 @@ class Archer:
 class StealthArcher(Archer):
     def __init__(self, position):
         super().__init__(position)
-        self.attack_radius = 3
         self.invisible = True
         self.spawn_time = time.time()
     
-    def deal_damage(self, hit):
-
+    def kill(self):
+        self.alive = False
         if(self.invisible == True):
-            return
-        super().deal_damage(hit)
+            stealthArchers.remove(self)
+        else:
+            archers.remove(self)
 
     def update(self):
         if(self.invisible == True):
@@ -885,24 +888,24 @@ def move_balloons(V):
             continue
         bal.move(closest_building, V)
 
-def move_healers(V):
+def move_healers(V,King):
     for healer in healers:
         if(healer.alive == False):
             continue
-        closest_troop = search_for_closest_troop(healer.position, V.map)
+        closest_troop = search_for_closest_troop(healer.position,King)
         if(closest_troop == None):
             continue
-        healer.move(closest_troop.position)
+        healer.move(closest_troop.position,King)
         
-def search_for_closest_troop(pos,vmap):
+def search_for_closest_troop(pos,King):
     closest_troop = None
     closest_dist = 10000
-    troops = barbarians + archers + stealthArchers + dragons + balloons
+    troops = barbarians + archers + stealthArchers + dragons + balloons + [King]
     for troop in troops:
         if(troop.alive == False):
             continue
         dist = abs(troop.position[0] - pos[0]) + abs(troop.position[1] - pos[1])
-        if(dist < closest_dist):
+        if(dist < closest_dist and troop.health != troop.max_health):
             closest_dist = dist
             closest_troop = troop
 

@@ -82,8 +82,6 @@ def archColor(arch):
         return Back.LIGHTRED_EX
     else:
         return Back.YELLOW
-def stealthArchColor():
-    return Back.WHITE
 
 def blColor(bl):
     health = bl.health
@@ -285,10 +283,10 @@ def printMap(V):
         a= 2*stealthArch.position[0]
         b = 2*stealthArch.position[1]
         stealthArch.update()
-        map_matrix[a][b] = stealthArchColor() + Fore.BLACK + 'ST'
-        map_matrix[a+1][b] = stealthArchColor() + Fore.BLACK + 'CH'
-        map_matrix[a][b+1] = stealthArchColor() + Fore.BLACK + 'AR'
-        map_matrix[a+1][b+1] = stealthArchColor() + Fore.BLACK + 'ER'
+        map_matrix[a][b] = archColor(stealthArch) + Fore.BLACK + 'ST'
+        map_matrix[a+1][b] = archColor(stealthArch) + Fore.BLACK + 'CH'
+        map_matrix[a][b+1] = archColor(stealthArch) + Fore.BLACK + 'AR'
+        map_matrix[a+1][b+1] = archColor(stealthArch) + Fore.BLACK + 'ER'
 
     for dr in dragons:
         a= 2*dr.position[0]
